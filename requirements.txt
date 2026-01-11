@@ -1,0 +1,17 @@
+# Generació procedural
+noise>=1.2.2
+numpy>=1.24.0
+scipy>=1.10.0
+
+# Interfície gràfica
+pygame>=2.5.0
+
+# Persistència
+pickle5>=0.0.12; python_version < '3.8'
+
+# IA (Ollama)
+requests>=2.31.0
+ollama>=0.1.0
+
+# Utilitats
+python-dateutil>=2.8.2
