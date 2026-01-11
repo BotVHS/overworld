@@ -5,6 +5,7 @@ scipy>=1.10.0
 
 # Interfície gràfica
 pygame>=2.5.0
+Pillow>=10.0.0
 
 # Persistència
 pickle5>=0.0.12; python_version < '3.8'
