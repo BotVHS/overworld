@@ -5,6 +5,7 @@ import numpy as np
 from typing import Optional, List
 from ..utils.noise_utils import NoiseGenerator, apply_redistribution_curve
 from .tile import Tile
+from .biome import BiomeClassifier, BiomeType, BIOME_DEFINITIONS
 
 
 class WorldGenerator:
@@ -276,6 +277,126 @@ class WorldGenerator:
 
         print(f"    {self.width * self.height} tiles creats")
 
+    def assign_biomes(self):
+        """
+        Assigna biomes a tots els tiles segons les seves condicions
+        """
+        print(f"  Assignant biomes...")
+
+        biome_counts = {}
+
+        for y in range(self.height):
+            for x in range(self.width):
+                tile = self.tiles[y][x]
+
+                # Classifica el bioma
+                biome_type = BiomeClassifier.classify(
+                    tile.altitude,
+                    tile.temperature,
+                    tile.humidity
+                )
+
+                tile.biome = biome_type
+
+                # Compta biomes per estadístiques
+                biome_counts[biome_type] = biome_counts.get(biome_type, 0) + 1
+
+        # Mostra estadístiques
+        print(f"    {len(biome_counts)} biomes diferents:")
+        for biome_type, count in sorted(biome_counts.items(), key=lambda x: x[1], reverse=True)[:5]:
+            biome_props = BIOME_DEFINITIONS[biome_type]
+            pct = (count / (self.width * self.height)) * 100
+            print(f"      - {biome_props.name}: {count} tiles ({pct:.1f}%)")
+
+    def generate_resources(self):
+        """
+        Genera recursos naturals per cada tile segons el seu bioma
+        """
+        print(f"  Generant recursos naturals...")
+
+        total_resources = {
+            "gold": 0,
+            "silver": 0,
+            "iron": 0,
+            "copper": 0,
+            "uranium": 0,
+            "coal": 0,
+            "oil": 0,
+            "gas": 0,
+            "gems": 0,
+        }
+
+        for y in range(self.height):
+            for x in range(self.width):
+                tile = self.tiles[y][x]
+
+                if tile.biome is None:
+                    continue
+
+                biome_props = BIOME_DEFINITIONS[tile.biome]
+
+                # Fusta
+                tile.resources["wood"] = biome_props.wood_abundance * 100
+
+                # Aigua (ja està assignada per rius i oceà)
+                if tile.resources["water"] < biome_props.water_abundance * 100:
+                    tile.resources["water"] = biome_props.water_abundance * 100
+
+                # Fertilitat del sòl
+                tile.resources["fertility"] = biome_props.fertility * 100
+
+                # Minerals (probabilístics)
+                if np.random.random() < biome_props.gold_chance:
+                    amount = np.random.uniform(20, 100)
+                    tile.resources["gold"] = amount
+                    total_resources["gold"] += 1
+
+                if np.random.random() < biome_props.silver_chance:
+                    amount = np.random.uniform(30, 100)
+                    tile.resources["silver"] = amount
+                    total_resources["silver"] += 1
+
+                if np.random.random() < biome_props.iron_chance:
+                    amount = np.random.uniform(40, 100)
+                    tile.resources["iron"] = amount
+                    total_resources["iron"] += 1
+
+                if np.random.random() < biome_props.copper_chance:
+                    amount = np.random.uniform(40, 100)
+                    tile.resources["copper"] = amount
+                    total_resources["copper"] += 1
+
+                if np.random.random() < biome_props.uranium_chance:
+                    amount = np.random.uniform(10, 60)
+                    tile.resources["uranium"] = amount
+                    total_resources["uranium"] += 1
+
+                if np.random.random() < biome_props.coal_chance:
+                    amount = np.random.uniform(50, 100)
+                    tile.resources["coal"] = amount
+                    total_resources["coal"] += 1
+
+                if np.random.random() < biome_props.oil_chance:
+                    amount = np.random.uniform(30, 100)
+                    tile.resources["oil"] = amount
+                    total_resources["oil"] += 1
+
+                if np.random.random() < biome_props.gas_chance:
+                    amount = np.random.uniform(30, 100)
+                    tile.resources["gas"] = amount
+                    total_resources["gas"] += 1
+
+                if np.random.random() < biome_props.gems_chance:
+                    amount = np.random.uniform(10, 80)
+                    tile.resources["gems"] = amount
+                    total_resources["gems"] += 1
+
+        # Estadístiques de recursos
+        print(f"    Recursos generats:")
+        for resource, count in total_resources.items():
+            if count > 0:
+                print(f"      - {resource.capitalize()}: {count} dipòsits")
+
     def generate_full_world(
         self,
         island_mode: bool = False,
@@ -304,8 +425,14 @@ class WorldGenerator:
         # Genera rius
         self.generate_rivers(num_rivers=num_rivers)
 
+        # Assigna biomes
+        self.assign_biomes()
+
+        # Genera recursos
+        self.generate_resources()
+
         print("Món generat correctament!")
-        print(f"  Estadístiques:")
+        print(f"  Estadístiques globals:")
 
         # Calcula estadístiques
         water_tiles = sum(1 for row in self.tiles for t in row if t.is_water)

@@ -103,7 +103,10 @@ def main():
     fertile_tiles = world.find_tiles_by_criteria(min_fertility=8.0, is_water=False)
     if fertile_tiles:
         tile = fertile_tiles[0]
+        from overworld.world.biome import BIOME_DEFINITIONS
+        biome_name = BIOME_DEFINITIONS[tile.biome].name if tile.biome else "Desconegut"
         print(f"🌾 Terra més fèrtil: ({tile.x}, {tile.y})")
+        print(f"   Bioma: {biome_name}")
         print(f"   Fertilitat: {tile.fertility_index:.1f}/10")
         print(f"   Altitud: {tile.altitude:.2f}, Humitat: {tile.humidity:.2f}, Temp: {tile.temperature:.2f}")
         print()
@@ -112,7 +115,10 @@ def main():
     mountains = world.find_tiles_by_criteria(min_altitude=0.9, is_water=False)
     if mountains:
         tile = mountains[0]
+        from overworld.world.biome import BIOME_DEFINITIONS
+        biome_name = BIOME_DEFINITIONS[tile.biome].name if tile.biome else "Desconegut"
         print(f"⛰️  Muntanya més alta: ({tile.x}, {tile.y})")
+        print(f"   Bioma: {biome_name}")
         print(f"   Altitud: {tile.altitude:.2f}")
         print(f"   Hostilitat: {tile.hostility:.1f}/10")
         print()
@@ -121,8 +127,48 @@ def main():
     rivers = [t for row in world.tiles for t in row if t.is_river]
     if rivers:
         tile = rivers[0]
+        from overworld.world.biome import BIOME_DEFINITIONS
+        biome_name = BIOME_DEFINITIONS[tile.biome].name if tile.biome else "Desconegut"
         print(f"💧 Exemple de riu: ({tile.x}, {tile.y})")
+        print(f"   Bioma: {biome_name}")
         print(f"   Aigua: {tile.resources['water']:.0f}/100")
+        print()
+
+    # Dipòsits de recursos
+    print("DIPÒSITS DE RECURSOS:")
+    print("-" * 80)
+
+    # Or
+    gold_tiles = [t for row in world.tiles for t in row if t.resources["gold"] > 0]
+    if gold_tiles:
+        tile = gold_tiles[0]
+        from overworld.world.biome import BIOME_DEFINITIONS
+        biome_name = BIOME_DEFINITIONS[tile.biome].name if tile.biome else "Desconegut"
+        print(f"💰 Dipòsit d'or: ({tile.x}, {tile.y})")
+        print(f"   Bioma: {biome_name}")
+        print(f"   Quantitat: {tile.resources['gold']:.0f}/100")
+        print()
+
+    # Ferro
+    iron_tiles = [t for row in world.tiles for t in row if t.resources["iron"] > 0]
+    if iron_tiles:
+        tile = iron_tiles[0]
+        from overworld.world.biome import BIOME_DEFINITIONS
+        biome_name = BIOME_DEFINITIONS[tile.biome].name if tile.biome else "Desconegut"
+        print(f"⚒️  Dipòsit de ferro: ({tile.x}, {tile.y})")
+        print(f"   Bioma: {biome_name}")
+        print(f"   Quantitat: {tile.resources['iron']:.0f}/100")
+        print()
+
+    # Petroli
+    oil_tiles = [t for row in world.tiles for t in row if t.resources["oil"] > 0]
+    if oil_tiles:
+        tile = oil_tiles[0]
+        from overworld.world.biome import BIOME_DEFINITIONS
+        biome_name = BIOME_DEFINITIONS[tile.biome].name if tile.biome else "Desconegut"
+        print(f"🛢️  Dipòsit de petroli: ({tile.x}, {tile.y})")
+        print(f"   Bioma: {biome_name}")
+        print(f"   Quantitat: {tile.resources['oil']:.0f}/100")
         print()
 
     # Mostra mapes ASCII
