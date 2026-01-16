@@ -1,18 +1,38 @@
-# Generació procedural
-perlin-noise>=1.12
-numpy>=1.24.0
-scipy>=1.10.0
+# ============================================================================
+# OVERWORLD - Advanced Procedural World Simulation
+# ============================================================================
 
-# Interfície gràfica
-pygame>=2.5.0
-Pillow>=10.0.0
+# Generació procedural de món
+perlin-noise>=1.12          # Generació de noise per altitud, humitat, temperatura
+numpy>=1.24.0               # Càlculs matricials i operacions numèriques
+scipy>=1.10.0               # Algoritmes científics (Voronoi per plaques tectòniques)
 
-# Persistència
-pickle5>=0.0.12; python_version < '3.8'
+# Interfície gràfica avançada
+pygame>=2.5.0               # UI principal amb 12 modes de visualització
+Pillow>=10.0.0              # Processament d'imatges (opcional per exports)
 
-# IA (Ollama)
-requests>=2.31.0
-ollama>=0.1.0
+# Persistència i serialització
+pickle5>=0.0.12; python_version < '3.8'  # Serialització per save/load
 
-# Utilitats
-python-dateutil>=2.8.2
+# IA i models de llenguatge (Ollama)
+requests>=2.31.0            # Client HTTP per Ollama API
+ollama>=0.1.0               # SDK oficial d'Ollama per integració
+
+# Utilitats i helpers
+python-dateutil>=2.8.2      # Gestió de dates per timeline temporal
+
+# ============================================================================
+# NOTES D'INSTAL·LACIÓ:
+#
+# Instal·lació bàsica:
+#   pip install -r requirements.txt
+#
+# Ollama (opcional però recomanat):
+#   1. Instal·la Ollama: https://ollama.ai
+#   2. Descarrega models: ollama pull llama3.2:3b
+#   3. Models recomanats: llama3.2:3b, qwen2.5:3b, phi3:3.8b
+#
+# Si Ollama no està disponible:
+#   - Tots els sistemes tenen fallback procedural
+#   - La simulació funcionarà sense IA
+# ============================================================================
